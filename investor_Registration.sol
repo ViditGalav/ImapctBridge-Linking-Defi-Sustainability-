@@ -24,7 +24,7 @@ contract InvestorRegistry {
 
     constructor(address _tokenAddress) {
         owner = msg.sender;
-        impactToken = ImpactToken(_tokenAddress); // Set the Impact Token contract address
+        impactToken = ImpactToken(_tokenAddress); // Setting the Impact Token contract address
     }
 
     function register(string memory name, string memory email) public {
