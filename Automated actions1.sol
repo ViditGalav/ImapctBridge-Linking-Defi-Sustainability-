@@ -2,16 +2,19 @@
 pragma solidity ^0.8.0;
 
 contract RiskContract {
-
+    uint public investedAmount;
     uint public payoutAmount; // Payout amount in the event of a risk event
-    uint public riskThreshold; // = Project value + Project value*(Risk Threshold %/100)
+    uint public riskThreshold; // Project value*(Risk Threshold %/100)
     uint public _riskScore;
 
+    payoutAmount = 0.5*investedAmount; //Since 50% of the invested amount is being returned.
+
     struct Project {
-        address projectAddress;
+        address projectId;
         uint riskThreshold;
     }
-    mapping(address => Project) public projects;
+    // mapping(address => Project) public projects;
+    Project public projects;
 
     constructor(
         uint256 _payoutAmount,
@@ -22,8 +25,8 @@ contract RiskContract {
     }
     
     struct Risk {
-        uint threat;
-        uint riskPercentage;
+        string threat;
+        uint riskProbability;
         uint riskImpact;
     }
 
@@ -35,13 +38,13 @@ contract RiskContract {
         _riskScore = 0; // Initialize the risk score
         
         for(uint i = 0; i < risks.length; i++) {
-            // Risk Score = summation of (riskPercentage * riskImpact) for all risks
-            _riskScore += risks[i].riskPercentage * risks[i].riskImpact;
+            // Risk Score = summation of (riskProbability * riskImpact) for all risks
+            _riskScore += risks[i].riskProbability * risks[i].riskImpact;
         }
     }
 
     function checkRiskAndTriggerPayout() external payable {
-        require(projects[msg.sender].projectAddress != address(0), "Project not registered.");
+        require(projects[msg.sender].projectId != address(0), "Project not registered.");
         calcRiskScore(); 
         
         if (_riskScore >= riskThreshold) {
@@ -50,3 +53,4 @@ contract RiskContract {
         }
     }
 }
+
