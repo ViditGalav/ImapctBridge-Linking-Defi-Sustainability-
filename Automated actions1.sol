@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.0;
+pragma solidity >= 0.7.0 < 0.9.0;
 
 contract RiskContract {
     uint public investedAmount;
@@ -7,20 +7,17 @@ contract RiskContract {
     uint public riskThreshold; // Project value*(Risk Threshold %/100)
     uint public _riskScore;
 
-    payoutAmount = 0.5*investedAmount; //Since 50% of the invested amount is being returned.
-
     struct Project {
         address projectId;
         uint riskThreshold;
     }
-    // mapping(address => Project) public projects;
-    Project public projects;
+    mapping(address => Project) public projects;
 
     constructor(
-        uint256 _payoutAmount,
+        uint256 _investedAmount,
         uint256 _riskThreshold
     ) {     
-        payoutAmount = _payoutAmount;
+        payoutAmount = _investedAmount/2; //Since 50% of the invested amount is being returned.
         riskThreshold = _riskThreshold;
     }
     
