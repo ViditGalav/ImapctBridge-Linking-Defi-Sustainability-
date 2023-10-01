@@ -25,11 +25,6 @@ contract RentalContract {
         owner = msg.sender;
     }
 
-    modifier onlyBorrower() {
-        require(msg.sender == owner, "Only the borrower can perform this action");
-        _;
-    }
-
     event LogMessage(string message);
 
     // Investor can approve the loan by entering 1.
@@ -46,9 +41,10 @@ contract RentalContract {
     }
 
     // Borrower can repay the loan.
-    function makeRepayment(uint _projectId, uint _amount) view public onlyBorrower {
+    function makeRepayment(uint _projectId, uint _amount) view public {
         Project memory project = projects[_projectId];
-        require(!project.isClosed, "Loan is already closed");                
+        require(!project.isClosed, "Loan is already closed"); 
+        require(msg.sender == project.borrower, "Only the borrower can make repayments");               
         uint remainingAmount = project.convenienceFee + project.amount + (project.amount * project.interestRate / 100) - project.totalRepaid;
         require(_amount <= remainingAmount, "Repayment amount exceeds remaining balance");
         project.totalRepaid += _amount;
