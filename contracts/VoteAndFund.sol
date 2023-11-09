@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.5.0 <=0.9.0;
 
+import "./InvestorReturns.sol";
+
 contract FundAllocationVote {
     uint256 public minThreshold;
 
@@ -30,11 +32,24 @@ contract FundAllocationVote {
         requestedAmount = _requestedAmount;
     }
 
+    modifier onEsgApproved{
+        
+        // statement here needs to be changed accoridng to the strucutre of esg contract so as
+        // to check for the score 
+
+        // require(ESG[projectId]>=7.5,"Not enough ESG score");  
+
+        _;
+    }
+
+
+
+
     function castVote(
         uint256 projectId,
         uint256 choice,
         uint256 voteCount
-    ) public {
+    ) public onEsgApproved {
         require(choice == 1 || choice == 2, "Wrong Choice");
         require(ProjectVerify[projectId] == true, "Not Valid Project");
         require(
@@ -47,7 +62,7 @@ contract FundAllocationVote {
 
     function calculateAllocation(
         uint256 projectId
-    ) internal view returns (uint256) {
+    ) onEsgApproved internal view returns (uint256) {
         uint256 yesVote = ProjectVotes[projectId][0];
         uint256 noVote = ProjectVotes[projectId][1];
 
@@ -67,7 +82,7 @@ contract FundAllocationVote {
         return Allocation;
     }
 
-    function transferFund(uint256 projectId) private view {
+    function transferFund(uint256 projectId) onEsgApproved private view {
         uint256 allocatedFund = calculateAllocation(projectId);
 
         // also we need to add projectOwner in project details
