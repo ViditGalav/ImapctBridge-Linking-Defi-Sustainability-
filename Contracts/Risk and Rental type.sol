@@ -62,6 +62,7 @@ contract ProjectRegistry {
         uint256 loanDuration
     );
 
+    // Event to log an investment in a project
     event InvestmentReceived(uint256 projectId, address indexed investor, uint256 amount);
 
     event RiskAdded(uint256 projectId, string description, uint256 riskOccurrencePercentage, uint256 impact);
@@ -106,7 +107,7 @@ contract ProjectRegistry {
             _isSeekingInvestment,
             _isSeekingLoan,
             _loanInterestRate,
-            _loanDuration
+            _loanDuration,
             new Risk[](0) // Initialize the risks as an empty array
         );
 
@@ -175,8 +176,9 @@ contract ProjectRegistry {
             string memory,
             string memory,
             string memory,
-            uint256
-            bool,  // Investment or Borrow Money (true for investment, false for borrowing)
+            uint256,
+            bool,  // Investment
+            bool,  //  Borrow Money
             uint256,  // Borrow Percentage (if borrowing)
             uint256,  // Borrow Duration (if borrowing)
             Risk[] memory  // Array of risks
@@ -185,24 +187,25 @@ contract ProjectRegistry {
         // Check if the project ID is valid
         require(projectId > 0 && projectId <= projectCount, "Invalid project ID");
 
-        // Retrieve and return the details of the project
-        Project storage project = projects[projectId];
-        return (
-            project.name,
-            project.techUsed,
-            project.fundsRequired,
-            project.socialDocumentIPFSHash,
-            project.environmentalDocumentIPFSHash,
-            project.financeDocumentIPFSHash,
-            project.governanceDocumentIPFSHash,
-            project.goals,
-            project.impact,
-            project.tokensToIssue
-            project.isSeekingInvestment,
-            project.borrowPercentage,
-            project.borrowDuration,
-            project.risks
-        );
+    // Retrieve and return the details of the project
+    Project storage project = projects[projectId];
+    return (
+    project.name,
+    project.techUsed,
+    project.fundsRequired,
+    project.socialDocumentIPFSHash,
+    project.environmentalDocumentIPFSHash,
+    project.financeDocumentIPFSHash,
+    project.governanceDocumentIPFSHash,
+    project.goals,
+    project.impact,
+    project.tokensToIssue,
+    project.isSeekingInvestment,
+    project.isSeekingLoan,
+    project.loanInterestRate,
+    project.loanDuration,
+    project.risks
+);
     }
 
     // Function to update the details of an existing project
@@ -219,6 +222,7 @@ contract ProjectRegistry {
         string memory _impact,
         uint256 _tokensToIssue,
         bool _isSeekingInvestment,
+        bool _isSeekingLoan,
         uint256 _borrowPercentage,
         uint256 _borrowDuration,
         Risk[] memory _risks
@@ -244,14 +248,13 @@ contract ProjectRegistry {
             _impact,
             _tokensToIssue,
             _isSeekingInvestment,
+            _isSeekingLoan,
             _borrowPercentage,
             _borrowDuration,
             _risks
         );
     }
     
-    // Event to log an investment in a project
-    event InvestmentReceived(uint256 projectId, address indexed investor, uint256 amount);
 
     // Function to allow investors to invest in a project
     function investInProject(uint256 projectId) external payable {
