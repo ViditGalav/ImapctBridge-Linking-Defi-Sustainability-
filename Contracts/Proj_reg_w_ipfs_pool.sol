@@ -14,7 +14,10 @@ contract ProjectRegistry {
         string goals; // Project goals
         string impact; // Project impact
         uint256 tokensToIssue; // Number of tokens to issue for the project
-        
+        bool isSeekingInvestment; // Flag to indicate if the project seeks investment
+        bool isSeekingLoan; // Flag to indicate if the project seeks a loan
+        uint256 loanInterestRate; // Annual interest rate for a loan (if seeking a loan)
+        uint256 loanDuration; // Loan duration in months (if seeking a loan)
     }
 
     // Struct to represent an investment in a project
@@ -44,8 +47,14 @@ contract ProjectRegistry {
         string governanceDocumentIPFSHash,
         string goals,
         string impact,
-        uint256 tokensToIssue
+        uint256 tokensToIssue,
+        bool isSeekingInvestment,
+        bool isSeekingLoan,
+        uint256 loanInterestRate,
+        uint256 loanDuration
     );
+
+    event InvestmentReceived(uint256 projectId, address indexed investor, uint256 amount);
 
     // Function to register a new project
     function registerProject(
@@ -58,7 +67,11 @@ contract ProjectRegistry {
         string memory _governanceDocumentIPFSHash,
         string memory _goals,
         string memory _impact,
-        uint256 _tokensToIssue
+        uint256 _tokensToIssue,
+        bool _isSeekingInvestment,
+        bool _isSeekingLoan,
+        uint256 _loanInterestRate,
+        uint256 _loanDuration
     ) public {
         // Check that project name, technology used, and funds required are provided and valid
         require(bytes(_name).length > 0, "Project name cannot be empty");
@@ -79,7 +92,11 @@ contract ProjectRegistry {
             _governanceDocumentIPFSHash,
             _goals,
             _impact,
-            _tokensToIssue
+            _tokensToIssue,
+            _isSeekingInvestment,
+            _isSeekingLoan,
+            _loanInterestRate,
+            _loanDuration
         );
 
         // Emit an event to log the registration of the new project
@@ -94,7 +111,11 @@ contract ProjectRegistry {
             _governanceDocumentIPFSHash,
             _goals,
             _impact,
-            _tokensToIssue
+            _tokensToIssue,
+            _isSeekingInvestment,
+            _isSeekingLoan,
+            _loanInterestRate,
+            _loanDuration
         );
     }
 
@@ -219,6 +240,7 @@ contract ProjectRegistry {
         
         return (investorContribution * 100) / totalInvestment;
     }
+    
 
     /*
     // Function to allow investors to withdraw their investments from a project
