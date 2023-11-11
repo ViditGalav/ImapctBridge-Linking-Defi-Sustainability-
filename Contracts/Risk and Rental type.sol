@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./ProjectPool.sol"; // Import the ProjectPool contract
+
 contract ProjectRegistry {
     // Struct to represent project details
     struct ProjectDetails {
@@ -91,6 +93,7 @@ function registerProject(ProjectDetails memory details) public {
 // Mapping to store the owner of each project
 mapping(uint256 => address) public projectOwners;
 
+//Function to add Risks to projects
     function addRiskToProject(
         uint256 projectId,
         string memory description,
