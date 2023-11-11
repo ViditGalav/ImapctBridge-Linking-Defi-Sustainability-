@@ -65,28 +65,31 @@ contract ProjectRegistry {
         uint256 impact
     );
 
-    // Function to register a new project
-    function registerProject(ProjectDetails memory details) public {
-        // Check that project name, technology used, and funds required are provided and valid
-        require(bytes(details.name).length > 0, "Project name cannot be empty");
-        require(
-            bytes(details.techUsed).length > 0,
-            "Technology used cannot be empty"
-        );
-        require(
-            details.fundsRequired > 0,
-            "Funds required must be greater than 0"
-        );
+// Function to register a new project
+function registerProject(ProjectDetails memory details) public {
+    // Check that project name, technology used, and funds required are provided and valid
+    require(bytes(details.name).length > 0, "Project name cannot be empty");
+    require(bytes(details.techUsed).length > 0, "Technology used cannot be empty");
+    require(details.fundsRequired > 0, "Funds required must be greater than 0");
 
-        // Increment projectCount to generate a unique project ID
-        projectCount++;
+    // Increment projectCount to generate a unique project ID
+    projectCount++;
 
-        // Create a new Project struct and store it in the projects mapping
-        projects[projectCount] = Project(details, new Risk[](0));
+    // Create a new Project struct and store it in the projects mapping
+    projects[projectCount] = Project(details, new Risk[](0));
 
-        // Emit an event to log the registration of the new project
-        emit ProjectRegistered(projectCount, details);
+    // Check if the project owner is already mapped
+    if (projectOwners[projectCount] == address(0)) {
+        // Map the project owner
+        projectOwners[projectCount] = msg.sender;
     }
+
+    // Emit an event to log the registration of the new project
+    emit ProjectRegistered(projectCount, details);
+}
+
+// Mapping to store the owner of each project
+mapping(uint256 => address) public projectOwners;
 
     function addRiskToProject(
         uint256 projectId,
